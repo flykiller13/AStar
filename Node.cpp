@@ -3,13 +3,20 @@
 
 Node::Node()
 {
+	NodeShape.setSize(sf::Vector2f(NodeSize, NodeSize));
+	NodeShape.setFillColor(NodeColor);
 	x = 0;
 	y = 0;
 }
 
 sf::RectangleShape Node::getNodeShape()
 {
-	sf::RectangleShape rectangle(sf::Vector2f(x + NodeSize, y + NodeSize));
-	rectangle.setFillColor(NodeColor);
-	return rectangle;
+	return NodeShape;
 }
+
+void Node::setNodePos(float x, float y)
+{
+	NodeShape.setPosition(sf::Vector2f(x, y));
+}
+
+
