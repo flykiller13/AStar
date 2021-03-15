@@ -1,13 +1,17 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "Node.h"
 
 int main()
 {
 
     sf::RenderWindow window(sf::VideoMode(600, 600), "AStar");
-    // define a 120x50 rectangle
-    sf::RectangleShape rectangle(sf::Vector2f(120.f, 50.f));
-    rectangle.setFillColor(sf::Color::Green);
+
+    //Node grid init
+    const int GridWidth = 2;
+    const int GridHeight = 2;
+
+    Node nodes[GridWidth * GridHeight];
 
     while (window.isOpen())
     {
@@ -43,8 +47,7 @@ int main()
         window.clear();
 
         //========== Main Loop Start ==========
-
-        window.draw(rectangle);
+        window.draw();
 
         //========== Main Loop End ==========
 
