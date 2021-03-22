@@ -4,83 +4,101 @@
 
 void drawNodes(sf::RenderWindow window, Node nodes[], int GridWidth, int GridHeight)
 {
-    for (int x = 0; x < GridWidth; x++)
-    {
-        for (int y = 0; y < GridHeight; y++)
-        {
-            int NodeIndex = y * GridWidth + x;
-            nodes[NodeIndex].setNodePos((float)x, (float)y);
-            window.draw(nodes[NodeIndex].getNodeShape());
-        }
-    }
+	for (int x = 0; x < GridWidth; x++)
+	{
+		for (int y = 0; y < GridHeight; y++)
+		{
+			int NodeIndex = y * GridWidth + x;
+			nodes[NodeIndex].setNodePos((float)x, (float)y);
+			window.draw(nodes[NodeIndex].getNodeShape());
+		}
+	}
 }
 
 int main()
 {
-    unsigned int WindowWidth = 600;
-    unsigned int WindowHeight = 600;
-    sf::RenderWindow window(sf::VideoMode(WindowWidth, WindowHeight), "AStar");
+	unsigned int WindowWidth = 600;
+	unsigned int WindowHeight = 600;
+	sf::RenderWindow window(sf::VideoMode(WindowWidth, WindowHeight), "AStar");
 
-    //Node grid init
-    const int GridWidth = 20;
-    const int GridHeight = 20;
+	//Node grid init
+	const int GridWidth = 16;
+	const int GridHeight = 16;
 
-    Node nodes[GridWidth * GridHeight];
+	int NodeIndex = 0;
+	int nSelectedNodeX = 0;
+	int nSelectedNodeY = 0;
 
-    while (window.isOpen())
-    {
+	Node* StartNode = nullptr;
+	Node* EndNode = nullptr;
 
-        //========== Events Start ==========
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
+	Node nodes[GridWidth * GridHeight];
+	while (window.isOpen())
+	{
+		//========== Events Start ==========
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				window.close();
 
-            if (event.type == sf::Event::MouseButtonPressed)
-            {
-                if (event.mouseButton.button == sf::Mouse::Left)
-                {
-                    std::cout << "the left button was pressed" << std::endl;
-                    std::cout << "mouse x: " << event.mouseButton.x << std::endl;
-                    std::cout << "mouse y: " << event.mouseButton.y << std::endl;
-                }
-            }
+			if (event.type == sf::Event::MouseButtonPressed)
+			{
+				if (event.mouseButton.button == sf::Mouse::Left)
+				{
+					//std::cout << "the left button was pressed" << std::endl;
+					//std::cout << "mouse x: " << event.mouseButton.x << std::endl;
+					//std::cout << "mouse y: " << event.mouseButton.y << std::endl;
+					sf::Vector2f ClickLocation;
+					ClickLocation.x = (float)event.mouseButton.x;
+					ClickLocation.y = (float)event.mouseButton.y;
+					std::cout << "mouse x: " << ClickLocation.x << std::endl;
+					nSelectedNodeX = ClickLocation.x / 35;
+					nSelectedNodeY = ClickLocation.y / 35;
 
-            if (event.type == sf::Event::MouseButtonReleased)
-            {
-                if (event.mouseButton.button == sf::Mouse::Left)
-                {
-                    std::cout << "the left button was released" << std::endl;
-                }
-            }
-        }
+					std::cout << nSelectedNodeX << " , " << nSelectedNodeY << std::endl;
+				}
+			}
 
-        //========== Events End ==========
+			if (event.type == sf::Event::MouseButtonReleased)
+			{
+				if (event.mouseButton.button == sf::Mouse::Left)
+				{
+					std::cout << "the left button was released" << std::endl;
+				}
+			}
+		}
 
-        window.clear();
+		//========== Events End ==========
 
-        //========== Main Loop Start ==========
-        
-        //drawNodes(window, nodes, GridWidth, GridHeight);
+		window.clear();
 
-        int NodeIndex = 0;
+		//========== Main Loop Start ==========
 
-        for (int x = 0; x < GridWidth; x++)
-        {
-            for (int y = 0; y < GridHeight; y++)
-            {
-                NodeIndex = y * GridWidth + x;
-                nodes[NodeIndex].setNodePos((float)x * nodes[NodeIndex].NodeSize + (x+1)*nodes[NodeIndex].padding,
-                    (float)y * nodes[NodeIndex].NodeSize + (y+1)*nodes[NodeIndex].padding);
-                window.draw(nodes[NodeIndex].getNodeShape());
-            }
-        }
+		for (int x = 0; x < GridWidth; x++)
+		{
+			for (int y = 0; y < GridHeight; y++)
+			{
+				NodeIndex = y * GridWidth + x;
+				nodes[NodeIndex].setNodePos((float)x * nodes[NodeIndex].NodeSize + (x + 1) * nodes[NodeIndex].padding,
+					(float)y * nodes[NodeIndex].NodeSize + (y + 1) * nodes[NodeIndex].padding);
 
-        //========== Main Loop End ==========
+				// Sets the color of the clicked node to yellow
+				if (nSelectedNodeX == x && nSelectedNodeY == y)
+				{
+					StartNode = &nodes[NodeIndex];
+				}
 
-        window.display();
-    }
+				
+				window.draw(nodes[NodeIndex].getNodeShape());
+			}
+		}
 
-    return 0;
+		StartNode->setNodeColor(sf::Color::Yellow);
+		//========== Main Loop End ==========
+
+		window.display();
+	}
+
+	return 0;
 }

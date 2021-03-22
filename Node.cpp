@@ -19,4 +19,7 @@ void Node::setNodePos(float x, float y)
 	NodeShape.setPosition(sf::Vector2f(x, y));
 }
 
-
+void Node::setNodeColor(sf::Color NodeColor)
+{
+	this->NodeShape.setFillColor(NodeColor);
+}
