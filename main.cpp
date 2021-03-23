@@ -21,18 +21,23 @@ int main()
 	unsigned int WindowHeight = 600;
 	sf::RenderWindow window(sf::VideoMode(WindowWidth, WindowHeight), "AStar");
 
-	//Node grid init
+	// Node grid init
 	const int GridWidth = 16;
 	const int GridHeight = 16;
 
+	// Node indexing variables init
 	int NodeIndex = 0;
 	int nSelectedNodeX = 0;
 	int nSelectedNodeY = 0;
-
 	Node* StartNode = nullptr;
 	Node* EndNode = nullptr;
 
+	// Nodes array init
 	Node nodes[GridWidth * GridHeight];
+
+	bool bShift = false;
+	bool bControl = false;
+
 	while (window.isOpen())
 	{
 		//========== Events Start ==========
@@ -46,15 +51,11 @@ int main()
 			{
 				if (event.mouseButton.button == sf::Mouse::Left)
 				{
-					//std::cout << "the left button was pressed" << std::endl;
-					//std::cout << "mouse x: " << event.mouseButton.x << std::endl;
-					//std::cout << "mouse y: " << event.mouseButton.y << std::endl;
 					sf::Vector2f ClickLocation;
 					ClickLocation.x = (float)event.mouseButton.x;
 					ClickLocation.y = (float)event.mouseButton.y;
-					std::cout << "mouse x: " << ClickLocation.x << std::endl;
-					nSelectedNodeX = ClickLocation.x / 35;
-					nSelectedNodeY = ClickLocation.y / 35;
+					nSelectedNodeX = ClickLocation.x / (nodes[0].NodeSize + nodes[0].padding);
+					nSelectedNodeY = ClickLocation.y / (nodes[0].NodeSize + nodes[0].padding);
 
 					std::cout << nSelectedNodeX << " , " << nSelectedNodeY << std::endl;
 				}
@@ -67,6 +68,16 @@ int main()
 					std::cout << "the left button was released" << std::endl;
 				}
 			}
+
+			// Control or Shift pressed. If Control is held, Shift can't be pressed
+			if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased)
+			{
+				bControl = event.key.control;
+				std::cout << "control:" << bControl << std::endl;
+				bShift = event.key.shift && !bControl;
+				std::cout << "shift:" << bShift << std::endl;
+			}
+			
 		}
 
 		//========== Events End ==========
@@ -75,6 +86,7 @@ int main()
 
 		//========== Main Loop Start ==========
 
+		// Draw nodes
 		for (int x = 0; x < GridWidth; x++)
 		{
 			for (int y = 0; y < GridHeight; y++)
@@ -83,10 +95,22 @@ int main()
 				nodes[NodeIndex].setNodePos((float)x * nodes[NodeIndex].NodeSize + (x + 1) * nodes[NodeIndex].padding,
 					(float)y * nodes[NodeIndex].NodeSize + (y + 1) * nodes[NodeIndex].padding);
 
-				// Sets the color of the clicked node to yellow
-				if (nSelectedNodeX == x && nSelectedNodeY == y)
+				// Sets the start node
+				if (nSelectedNodeX == x && nSelectedNodeY == y && bControl)
 				{
+					if (StartNode != nullptr)
+						StartNode->setNodeColor(sf::Color::Blue);
 					StartNode = &nodes[NodeIndex];
+					StartNode->setNodeColor(sf::Color::Yellow);
+				}
+
+				// Sets the end node
+				if (nSelectedNodeX == x && nSelectedNodeY == y && bShift)
+				{
+					if (EndNode != nullptr)
+						EndNode->setNodeColor(sf::Color::Blue);
+					EndNode = &nodes[NodeIndex];
+					EndNode->setNodeColor(sf::Color::Green);
 				}
 
 				
@@ -94,7 +118,7 @@ int main()
 			}
 		}
 
-		StartNode->setNodeColor(sf::Color::Yellow);
+		
 		//========== Main Loop End ==========
 
 		window.display();
